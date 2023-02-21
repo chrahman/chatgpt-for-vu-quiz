@@ -1,0 +1,176 @@
+.modal1 {
+    position: fixed;
+    z-index: 999999999;
+    right: -35%;
+    top: 0;
+    width: 30%;
+    height: 100%;
+    overflow: auto;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', Calibri;
+    background: #fff;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); */
+    box-shadow: 0 0 30px rgb(0 0 0 / 30%);
+}
+
+.modal1.show {
+    right: 0;
+    /* Slide in */
+}
+
+.modal-header1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+}
+
+.modal-header1 h3 {
+    font-size: 1.75rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    color: #000088;
+}
+
+button#openModalBtn1 {
+    position: fixed !important;
+    top: 30% !important;
+    right: 0 !important;
+    transform: rotate(-90deg) !important;
+    transform-origin: bottom right !important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    z-index: 9999999 !important;
+    background: #3a63b8 !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 5px 10px !important;
+    opacity: .8;
+}
+
+button#openModalBtn1:hover {
+    opacity: 1 !important;
+}
+
+.close1 {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close1:hover,
+.close1:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#answerContainer1 {
+    padding: 20px;
+}
+
+div#gptAnswerContainer {
+    overflow: auto;
+    position: relative;
+}
+
+
+#gptAnswerContainer h5 {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    margin-top: 0 !important;
+}
+
+
+.chat-gpt-container p {
+    font-size: 18px !important;
+}
+
+.chat-gpt-container pre {
+    background: #eee !important;
+    padding: 10px !important;
+    border-radius: 5px !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+}
+
+.chat-gpt-container code {
+    background: #eee !important;
+    padding: 0 5px !important;
+    border-radius: 5px !important;
+    line-height: 1.5 !important;
+    font-size: 16px !important;
+}
+
+#myModal1 a {
+    text-decoration: none !important;
+    color: #3a63b8 !important;
+}
+
+#myModal1 a:hover {
+    text-decoration: underline !important;
+}
+
+#myModal1::-webkit-scrollbar {
+    width: 5px;
+}
+
+#myModal1::-webkit-scrollbar-track {
+    background: #eee;
+}
+
+#myModal1::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+#myModal1::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.chat-gpt-container #stopButton {
+    display: block !important;
+}
+
+div#btnContainer {
+    padding: 10px;
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(183deg, hsla(0, 0%, 100%, 0) 13.94%, #ffffffa8 54.73%);
+}
+
+button#stopButton:hover, button#regenerateButton:hover {
+    background: #eee !important;
+}
+
+button#stopButton, button#regenerateButton {
+    cursor: pointer !important;
+    outline: none !important;
+    border: 1px solid rgba(0, 0, 0, .1) !important;
+    background: #ffff !important;
+    padding: 5px 10px !important;
+    border-radius: 5px !important;
+}
+
+button#stopButton:focus,
+button#regenerateButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.15rem rgb(0 123 255 / 25%);
+}
+
+.regen-svg {
+    width: 0.75rem;
+    height: 0.75rem;
+    margin: 0;
+    padding-right: 6px;
+    margin-bottom: -1px;
+}
