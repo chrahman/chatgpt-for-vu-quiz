@@ -168,9 +168,9 @@ button#regenerateButton:focus {
 }
 
 .regen-svg {
-    width: 0.75rem;
-    height: 0.75rem;
-    margin: 0;
-    padding-right: 6px;
-    margin-bottom: -1px;
+    width: 1em !important;
+    height: 1em !important;
+    margin: 0 !important;
+    padding-right: 6px !important;
+    margin-bottom: -1px !important;
 }

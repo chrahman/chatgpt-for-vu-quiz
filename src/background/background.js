@@ -5,7 +5,7 @@ import { fetchSSE } from "./fetch-sse";
 
 Browser.runtime.onInstalled.addListener((details) => {
   if (details.reason === "install") {
-    window.open("demo.html");
+    Browser.tabs.create({ url: "demo.html" });
   }
 });
 
@@ -71,8 +71,7 @@ async function getAnswer(question, callback, abortController) {
   });
 }
 
-Browser.runtime.onConnect.addListener((port_) => {
-  const port = port_;
+Browser.runtime.onConnect.addListener((port) => {
   let abortController = new AbortController();
   port.onMessage.addListener(async (msg) => {
     console.log("received msg", msg);

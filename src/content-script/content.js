@@ -177,10 +177,15 @@ document.head.appendChild(styleSheet);
 var close = document.getElementsByClassName("close1")[0];
 
 openModal.onclick = function () {
-  const newLine = "\n \n"
-  if (!document.getElementById("gptAnswerContainer").classList.contains("answer")) {
-    // run("Show me the example of HTML CSS and JavaScript");
-    run(question + newLine + q1 + newLine + q2 + newLine + q3 + newLine + q4 + newLine);
+  const newLine = "\n \n";
+  if (question) {
+    if (!document.getElementById("gptAnswerContainer").classList.contains("answer")) {
+      const mc = q1 && q2 && q3 && q4 ? q1 + newLine + q2 + newLine + q3 + newLine + q4 + newLine : "";
+      // run("Show me the example of HTML CSS and JavaScript");
+      run(question + newLine + mc);
+    }
+  } else {
+    document.getElementById("gptAnswerContainer").innerHTML = "<p>Something went wrong!</p><p>Question not found on this page</p>";
   }
   myModal.classList.add("show");
 };
