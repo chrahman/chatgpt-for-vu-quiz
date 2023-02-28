@@ -119,7 +119,7 @@ async function run(question) {
       hljs.highlightAll();
       scrollToBottom(container);
       
-      const isCompleted = msg.response.message.end_turn === true;
+      const isCompleted = msg.response.message.end_turn === false;
       if (isCompleted) {
         stopButton.style.display = "none";
         regenerateButton.style.display = "block";

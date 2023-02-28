@@ -18,10 +18,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": [
+        "https://demo-1k2.pages.dev/",
+        "https://quiz.vu.edu.pk/*",
+        "http://quiz.vu.edu.pk/*"
+      ],
       "js": ["content.js"],
       "css": ["styles/content.css"]
     }
   ],
-  "permissions": ["activeTab", "tabs"]
+  "permissions": ["activeTab", "tabs"],
+  "host_permissions": ["https://*.openai.com/"]
 }

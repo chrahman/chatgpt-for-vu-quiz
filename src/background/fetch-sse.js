@@ -13,9 +13,9 @@ export async function fetchSSE(resource, options) {
       onMessage(event.data);
     }
   });
-  if (fetchOptions.signal) {
-    console.debug("fetchOptions.signal =", fetchOptions.signal);
-  }
+  // if (fetchOptions.signal) {
+  //   console.debug("fetchOptions.signal =", fetchOptions.signal);
+  // }
   for await (const chunk of streamAsyncIterable(resp.body)) {
     const str = new TextDecoder().decode(chunk);
     parser.feed(str);
