@@ -27,6 +27,5 @@
       "css": ["styles/content.css"]
     }
   ],
-  "permissions": ["activeTab", "tabs"],
-  "host_permissions": ["https://*.openai.com/"]
+  "permissions": ["activeTab", "tabs", "https://*.openai.com/"]
 }

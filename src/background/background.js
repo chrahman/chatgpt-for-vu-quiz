@@ -3,15 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import Browser from "webextension-polyfill";
 import { fetchSSE } from "./fetch-sse";
 
-Browser.runtime.onInstalled.addListener((details) => {
-  if (details.reason === "install") {
-    Browser.tabs.create({ url: "demo.html" });
-  }
-});
-
 const KEY_ACCESS_TOKEN = "accessToken";
 
-const cache = new ExpiryMap(10 * 1000);
+const cache = new ExpiryMap(100 * 1000);
 
 async function getAccessToken() {
   if (cache.get(KEY_ACCESS_TOKEN)) {
@@ -29,8 +23,15 @@ async function getAccessToken() {
   return data.accessToken;
 }
 
-async function getAnswer(question, callback, abortController) {
+async function getAnswer(port, question) {
   const accessToken = await getAccessToken();
+
+  const controller = new AbortController();
+  port.onDisconnect.addListener(() => {
+    console.log("Port disconnected by the user");
+    controller.abort();
+  });
+
   await fetchSSE("https://chat.openai.com/backend-api/conversation", {
     method: "POST",
     headers: {
@@ -52,51 +53,45 @@ async function getAnswer(question, callback, abortController) {
       model: "text-davinci-002-render",
       parent_message_id: uuidv4(),
     }),
+    signal: controller.signal,
     onMessage(message) {
-      console.debug("sse message", message);
+      console.debug("sse message received");
       if (message === "[DONE]") {
         return;
       }
       let data;
       try {
         data = JSON.parse(message);
-      } catch (error) {
-        console.debug("json error", error);
-        cache.delete(KEY_ACCESS_TOKEN);
-        return;
+      } catch (err) {
+        if (err.message === "The user aborted a request.") {
+          console.log("The user aborted a request.");
+        } else {
+          port.postMessage({ error: err.message });
+          cache.delete(KEY_ACCESS_TOKEN);
+        }
       }
       if (data) {
-        callback(data);
+        port.postMessage({ response: data });
       }
-    },
-    signal: abortController.signal,
+    }
   });
 }
 
 Browser.runtime.onConnect.addListener((port) => {
-  let abortController = new AbortController();
   port.onMessage.addListener(async (msg) => {
     console.log("received msg", msg);
     try {
-      await getAnswer(msg.question, (response) => {
-        port.postMessage({ response });
-        console.log("answer recived");
-      }, abortController);
+      await getAnswer(port, msg.question);
     } catch (err) {
-      if (err.message === "The user aborted a request.") {
-        console.log("Abort Error: The user aborted a request.");
-      } else {
-        // console.log(err);
-        port.postMessage({ error: err.message });
-        cache.delete(KEY_ACCESS_TOKEN);
-      }
+      port.postMessage({ error: err.message });
+      cache.delete(KEY_ACCESS_TOKEN);
     }
   });
-  port.onDisconnect.addListener(() => {
-    console.log("port disconnected");
-    if (abortController) {
-      abortController.abort();
-      console.log("abort: controller aborted");
-    }
-  });
+});
+
+
+Browser.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    Browser.tabs.create({ url: "demo.html" });
+  }
 });

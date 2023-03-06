@@ -176,15 +176,10 @@ button#regenerateButton:focus {
 }
 
 .loading {
-    animation: animatename 2s linear infinite;
+    animation:animatename 2s linear infinite;
 }
 
-@keyframes animatename {
-    50% {
-        opacity: .3;
-    }
-
-    100% {
-        opacity: 1;
-    }
+@keyframes animatename{
+    50%{opacity: .3;}
+    100%{opacity: 1;}
 }
