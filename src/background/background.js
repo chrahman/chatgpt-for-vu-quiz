@@ -83,8 +83,12 @@ Browser.runtime.onConnect.addListener((port) => {
     try {
       await getAnswer(port, msg.question);
     } catch (err) {
-      port.postMessage({ error: err.message });
-      cache.delete(KEY_ACCESS_TOKEN);
+      if (err.message === "The user aborted a request.") {
+        console.log("The user aborted a request.");
+      } else {
+        port.postMessage({ error: err.message });
+        cache.delete(KEY_ACCESS_TOKEN);
+      }
     }
   });
 });
