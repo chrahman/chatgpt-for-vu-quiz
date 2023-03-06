@@ -174,3 +174,17 @@ button#regenerateButton:focus {
     padding-right: 6px !important;
     margin-bottom: -1px !important;
 }
+
+.loading {
+    animation: animatename 2s linear infinite;
+}
+
+@keyframes animatename {
+    50% {
+        opacity: .3;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
