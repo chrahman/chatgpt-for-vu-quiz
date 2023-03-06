@@ -63,12 +63,9 @@ async function getAnswer(port, question) {
       try {
         data = JSON.parse(message);
       } catch (err) {
-        if (err.message === "The user aborted a request.") {
-          console.log("The user aborted a request.");
-        } else {
-          port.postMessage({ error: err.message });
-          cache.delete(KEY_ACCESS_TOKEN);
-        }
+        console.debug("Error parsing SSE message", err);
+        cache.delete(KEY_ACCESS_TOKEN);
+        return;
       }
       if (data) {
         port.postMessage({ response: data });
