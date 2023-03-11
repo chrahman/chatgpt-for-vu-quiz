@@ -94,6 +94,11 @@ div#gptAnswerContainer {
     font-size: 18px !important;
 }
 
+p.gpt-error {
+    color: red;
+    margin-top: 0 !important;
+}
+
 .chat-gpt-container pre {
     background: #eee !important;
     padding: 10px !important;

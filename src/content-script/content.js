@@ -119,7 +119,7 @@ async function run(question) {
       hljs.highlightAll();
       scrollToBottom(container);
       
-      const isCompleted = msg.response.message.end_turn === false;
+      const isCompleted = msg.response.message.end_turn === true;
       if (isCompleted) {
         stopButton.style.display = "none";
         regenerateButton.style.display = "block";
@@ -131,21 +131,21 @@ async function run(question) {
       }
     } else if (msg.error === "UNAUTHORIZED") {
       container.innerHTML =
-        '<p>UNAUTHORIZED!</p><p>Please login at <a href="https://chat.openai.com" target="_blank">chat.openai.com</a> first</p>';
+        '<p class="gpt-error">UNAUTHORIZED!</p><p>Please login at <a href="https://chat.openai.com" target="_blank">chat.openai.com</a> first</p>';
         stopButton.style.display = "none";
         regenerateButton.style.display = "none";
     } else if (msg.error === "CLOUDFLARE") {
       container.innerHTML =
-        '<p>CLOUDFLARE!</p><p>Please pass cloudflare check at <a href="https://chat.openai.com" target="_blank">chat.openai.com</a> first</p>';
+        '<p class="gpt-error">Cloudflare error!</p><p>Please pass cloudflare check at <a href="https://chat.openai.com" target="_blank">chat.openai.com</a></p>';
         stopButton.style.display = "none";
         regenerateButton.style.display = "none";
     }
     else if (msg.error) {
-      container.innerHTML = `<p>Failed to load response from ChatGPT</p><pre>${js_beautify(msg.error, { indent_size: 2, space_in_empty_paren: true })}</pre>`;
+      container.innerHTML = `<p class="gpt-error">Failed to load response from ChatGPT</p><pre>${js_beautify(msg.error, { indent_size: 2, space_in_empty_paren: true })}</pre>`;
       stopButton.style.display = "none";
       regenerateButton.style.display = "none";
     } else {
-      container.innerHTML = "<p>Failed to load response from ChatGPT</p>";
+      container.innerHTML = "<p class='gpt-error'>Unknown Error!</p><p>Failed to load response from ChatGPT.</p>";
       stopButton.style.display = "none";
       regenerateButton.style.display = "none";
     }
