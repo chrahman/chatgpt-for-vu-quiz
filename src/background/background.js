@@ -24,12 +24,15 @@ async function getAccessToken() {
 }
 
 async function getAnswer(port, question) {
+  console.clear();
   const accessToken = await getAccessToken();
+  let conversationID;
 
   const controller = new AbortController();
   port.onDisconnect.addListener(() => {
     console.log("Port disconnected by the user");
     controller.abort();
+    deleteConversation(accessToken, conversationID);
   });
 
   await fetchSSE("https://chat.openai.com/backend-api/conversation", {
@@ -62,6 +65,7 @@ async function getAnswer(port, question) {
       let data;
       try {
         data = JSON.parse(message);
+        conversationID = data.conversation_id;
       } catch (err) {
         console.debug("Error parsing SSE message", err);
         cache.delete(KEY_ACCESS_TOKEN);
@@ -72,11 +76,30 @@ async function getAnswer(port, question) {
       }
     }
   });
+  deleteConversation(accessToken, conversationID);
+}
+
+// Delete the conversation after it's done
+async function deleteConversation(accessToken, conversationID) {
+  try {
+    const resp = await fetch(`https://chat.openai.com/backend-api/conversation/${conversationID}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ is_visible: false })
+    });
+    const data = await resp.json();
+    console.log("Conversation deleted", data);
+  } catch (err) {
+    console.error("Error deleting conversation", err);
+  }
 }
 
 Browser.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener(async (msg) => {
-    console.log("received msg", msg);
+    console.log("Question msg received", msg);
     try {
       await getAnswer(port, msg.question);
     } catch (err) {
