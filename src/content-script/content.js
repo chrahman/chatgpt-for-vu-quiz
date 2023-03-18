@@ -158,6 +158,7 @@ console.log("content script loaded");
 
 // create modal
 const openModal = document.createElement("button");
+const getImageSrc = Browser.runtime.getURL("assets/48.png");
 openModal.id = "openModalBtn1";
 openModal.innerHTML = "Show Answer";
 const myModal = document.createElement("div");
@@ -166,7 +167,7 @@ myModal.className = "modal1";
 myModal.innerHTML = `
   <div class="modal-header1">
     <span class="close1" title="Close to select answer">&times;</span>
-    <h3>ChatGPT For Vu Quiz</h3>
+    <div class="flex-head"><img src="${getImageSrc}" /><h3>ChatGPT For Vu Quiz</h3></div>
   </div>
   <div id="answerContainer1">
     <div id="gptAnswerContainer"></div>
