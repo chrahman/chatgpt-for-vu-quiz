@@ -25,7 +25,9 @@
       "matches": [
         "https://demo-1k2.pages.dev/",
         "https://quiz.vu.edu.pk/*",
-        "http://quiz.vu.edu.pk/*"
+        "http://quiz.vu.edu.pk/*",
+        "https://vulms.vu.edu.pk/Quiz/QuizQuestion.aspx?*",
+        "http://vulms.vu.edu.pk/Quiz/QuizQuestion.aspx?*"
       ],
       "js": ["content.js"],
       "css": ["styles/content.css"]

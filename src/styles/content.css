@@ -7,10 +7,24 @@
     height: 100%;
     overflow: auto;
     transition: all 0.3s ease;
-    font-family: 'Poppins', Calibri;
+    font-family: Calibri, 'Arial' !important;
+    font-size: 14px !important;
     background: #fff;
     /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); */
     box-shadow: 0 0 30px rgb(0 0 0 / 30%);
+    font-weight: initial !important;
+}
+
+div#gptAnswerContainer {
+    font-family: Calibri, 'Arial' !important;
+    font-size: 14px !important;
+    font-weight: initial !important;
+}
+
+.modal1 p {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    font-weight: initial !important;
 }
 
 .modal1.show {
@@ -28,6 +42,7 @@
     z-index: 1;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     background-color: #fff;
+    font-weight: initial !important;
 }
 
 .modal-header1 h3 {
@@ -39,11 +54,11 @@
 
 button#openModalBtn1 {
     position: fixed !important;
-    top: 30% !important;
+    top: 50% !important;
     right: 0 !important;
     transform: rotate(-90deg) !important;
     transform-origin: bottom right !important;
-    font-size: 20px !important;
+    font-size: 15px !important;
     cursor: pointer !important;
     z-index: 9999999 !important;
     background: #3a63b8 !important;
@@ -51,6 +66,7 @@ button#openModalBtn1 {
     border: none !important;
     padding: 5px 10px !important;
     opacity: .8;
+    outline: none !important;
 }
 
 button#openModalBtn1:hover {
@@ -198,4 +214,9 @@ button#regenerateButton:focus {
     margin-right: 10px;
     width: 10%;
     height: 10%;
+}
+
+.regen-svg {
+    width: 18px !important;
+    height: 15px !important;
 }
