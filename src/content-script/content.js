@@ -129,16 +129,6 @@ async function run(question) {
         stopButton.style.display = "block";
         regenerateButton.style.display = "none";
       }
-    } else if (msg.error === "UNAUTHORIZED") {
-      container.innerHTML =
-        '<p class="gpt-error">UNAUTHORIZED!</p><p>Please login at <a href="https://chat.openai.com" target="_blank">chat.openai.com</a> first</p>';
-        stopButton.style.display = "none";
-        regenerateButton.style.display = "none";
-    } else if (msg.error === "CLOUDFLARE") {
-      container.innerHTML =
-        '<p class="gpt-error">Cloudflare error!</p><p>Please pass cloudflare check at <a href="https://chat.openai.com" target="_blank">chat.openai.com</a></p>';
-        stopButton.style.display = "none";
-        regenerateButton.style.display = "none";
     }
     else if (msg.error) {
       container.innerHTML = `<p class="gpt-error">Failed to load response from ChatGPT</p><pre>${js_beautify(msg.error, { indent_size: 2, space_in_empty_paren: true })}</pre>`;

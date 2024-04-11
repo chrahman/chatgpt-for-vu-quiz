@@ -3,43 +3,45 @@ import { v4 as uuidv4 } from "uuid";
 import Browser from "webextension-polyfill";
 import { fetchSSE } from "./fetch-sse";
 
-const KEY_ACCESS_TOKEN = "accessToken";
+const KEY_ARKOSE_TOKEN = "arkoseToken";
 
 const cache = new ExpiryMap(100 * 1000);
 
-async function getAccessToken() {
-  if (cache.get(KEY_ACCESS_TOKEN)) {
-    return cache.get(KEY_ACCESS_TOKEN);
+async function getArkoseToken() {
+  try {
+    
+    if (cache.get(KEY_ARKOSE_TOKEN)) {
+      return cache.get(KEY_ARKOSE_TOKEN);
+    }
+    const resp = await fetch("https://chat.openai.com/backend-anon/sentinel/chat-requirements", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await resp.json();
+    cache.set(KEY_ARKOSE_TOKEN, data.token);
+    return data.token;
+  } catch (error) {
+    throw new Error("error", error?.message);
   }
-  const resp = await fetch("https://chat.openai.com/api/auth/session");
-  if (resp.status === 403) {
-    throw new Error("CLOUDFLARE");
-  }
-  const data = await resp.json().catch(() => ({}));
-  if (!data.accessToken) {
-    throw new Error("UNAUTHORIZED");
-  }
-  cache.set(KEY_ACCESS_TOKEN, data.accessToken);
-  return data.accessToken;
 }
 
 async function getAnswer(port, question) {
   console.clear();
-  const accessToken = await getAccessToken();
-  let conversationID;
+  const arkoseToken = await getArkoseToken();
 
   const controller = new AbortController();
   port.onDisconnect.addListener(() => {
     console.log("Port disconnected by the user");
     controller.abort();
-    deleteConversation(accessToken, conversationID);
   });
 
-  await fetchSSE("https://chat.openai.com/backend-api/conversation", {
+  await fetchSSE("https://chat.openai.com/backend-anon/conversation", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+      "openai-sentinel-chat-requirements-token": arkoseToken,
     },
     body: JSON.stringify({
       action: "next",
@@ -53,7 +55,7 @@ async function getAnswer(port, question) {
           },
         },
       ],
-      model: "text-davinci-002-render",
+      model: "text-davinci-002-render-sha",
       parent_message_id: uuidv4(),
     }),
     signal: controller.signal,
@@ -65,10 +67,9 @@ async function getAnswer(port, question) {
       let data;
       try {
         data = JSON.parse(message);
-        conversationID = data.conversation_id;
       } catch (err) {
         console.debug("Error parsing SSE message", err);
-        cache.delete(KEY_ACCESS_TOKEN);
+        cache.delete(KEY_ARKOSE_TOKEN);
         return;
       }
       if (data) {
@@ -76,26 +77,8 @@ async function getAnswer(port, question) {
       }
     }
   });
-  deleteConversation(accessToken, conversationID);
 }
 
-// Delete the conversation after it's done
-async function deleteConversation(accessToken, conversationID) {
-  try {
-    const resp = await fetch(`https://chat.openai.com/backend-api/conversation/${conversationID}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ is_visible: false })
-    });
-    const data = await resp.json();
-    console.log("Conversation deleted", data);
-  } catch (err) {
-    console.error("Error deleting conversation", err);
-  }
-}
 
 Browser.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener(async (msg) => {
@@ -107,7 +90,7 @@ Browser.runtime.onConnect.addListener((port) => {
         console.log("The user aborted a request.");
       } else {
         port.postMessage({ error: err.message });
-        cache.delete(KEY_ACCESS_TOKEN);
+        cache.delete(KEY_ARKOSE_TOKEN);
       }
     }
   });
