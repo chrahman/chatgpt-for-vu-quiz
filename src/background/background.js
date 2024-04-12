@@ -4,8 +4,10 @@ import Browser from "webextension-polyfill";
 import { fetchSSE } from "./fetch-sse";
 
 const KEY_ACCESS_TOKEN = "accessToken";
+const KEY_ARKOSE_TOKEN = "arkoseToken";
 
 const cache = new ExpiryMap(100 * 1000);
+const cacheArkose = new ExpiryMap(100 * 1000);
 
 async function getAccessToken() {
   if (cache.get(KEY_ACCESS_TOKEN)) {
@@ -23,9 +25,34 @@ async function getAccessToken() {
   return data.accessToken;
 }
 
+async function getArkoseToken() {
+  try {
+    const accessToken = await getAccessToken();
+    if (cacheArkose.get(KEY_ARKOSE_TOKEN)) {
+      return cacheArkose.get(KEY_ARKOSE_TOKEN);
+    }
+    const resp = await fetch(
+      "https://chat.openai.com/backend-api/sentinel/chat-requirements",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    const data = await resp.json();
+    cacheArkose.set(KEY_ARKOSE_TOKEN, data.token);
+    return data.token;
+  } catch (error) {
+    throw new Error("error", error?.message);
+  }
+}
+
 async function getAnswer(port, question) {
   console.clear();
   const accessToken = await getAccessToken();
+  const arkoseToken = await getArkoseToken();
   let conversationID;
 
   const controller = new AbortController();
@@ -40,6 +67,7 @@ async function getAnswer(port, question) {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
+      "openai-sentinel-chat-requirements-token": arkoseToken,
     },
     body: JSON.stringify({
       action: "next",
@@ -53,7 +81,10 @@ async function getAnswer(port, question) {
           },
         },
       ],
-      model: "text-davinci-002-render",
+      model: "text-davinci-002-render-sha",
+      conversation_mode: {
+        kind: "primary_assistant",
+      },
       parent_message_id: uuidv4(),
     }),
     signal: controller.signal,
@@ -69,12 +100,13 @@ async function getAnswer(port, question) {
       } catch (err) {
         console.debug("Error parsing SSE message", err);
         cache.delete(KEY_ACCESS_TOKEN);
+        cacheArkose.delete(KEY_ARKOSE_TOKEN);
         return;
       }
       if (data) {
         port.postMessage({ response: data });
       }
-    }
+    },
   });
   deleteConversation(accessToken, conversationID);
 }
@@ -82,14 +114,17 @@ async function getAnswer(port, question) {
 // Delete the conversation after it's done
 async function deleteConversation(accessToken, conversationID) {
   try {
-    const resp = await fetch(`https://chat.openai.com/backend-api/conversation/${conversationID}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ is_visible: false })
-    });
+    const resp = await fetch(
+      `https://chat.openai.com/backend-api/conversation/${conversationID}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ is_visible: false }),
+      }
+    );
     const data = await resp.json();
     console.log("Conversation deleted", data);
   } catch (err) {
@@ -108,11 +143,11 @@ Browser.runtime.onConnect.addListener((port) => {
       } else {
         port.postMessage({ error: err.message });
         cache.delete(KEY_ACCESS_TOKEN);
+        cacheArkose.delete(KEY_ARKOSE_TOKEN);
       }
     }
   });
 });
-
 
 Browser.runtime.onInstalled.addListener((details) => {
   if (details.reason === "install") {
