@@ -3,9 +3,7 @@
   "manifest_version": 2,
   "name": "ChatGPT for Vu Quiz",
   "description": "Get ChatGPT answers in Vu Live Quiz",
-  "web_accessible_resources": [
-    "assets/48.png"
-  ],
+  "web_accessible_resources": ["assets/48.png"],
   "icons": {
     "16": "assets/16.png",
     "32": "assets/32.png",
@@ -32,5 +30,5 @@
       "css": ["styles/content.css"]
     }
   ],
-  "permissions": ["activeTab", "tabs", "https://*.openai.com/"]
+  "permissions": ["activeTab", "tabs", "https://*.chatgpt.com/"]
 }

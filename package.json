@@ -20,13 +20,16 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
+    "buffer": "^6.0.3",
     "copy-webpack-plugin": "^11.0.0",
     "eventsource-parser": "^0.1.0",
     "expiry-map": "^2.0.0",
     "highlight.js": "^11.7.0",
     "js-beautify": "^1.14.7",
+    "js-sha3": "^0.9.3",
     "markdown-it": "^13.0.1",
     "prismjs": "^1.29.0",
+    "random-int": "^3.0.0",
     "uuid": "^9.0.0",
     "webextension-polyfill": "^0.10.0",
     "webpack-extension-reloader": "^1.1.4",

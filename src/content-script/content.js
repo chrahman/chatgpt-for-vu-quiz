@@ -33,9 +33,13 @@ if (span) {
 
 let question;
 if (document.querySelector("#divnoselect textarea.getActualQuestion")) {
-  question = document.querySelector("#divnoselect textarea.getActualQuestion").value;
+  question = document.querySelector(
+    "#divnoselect textarea.getActualQuestion"
+  ).value;
 } else if (document.querySelector("#divnoselect span.getActualQuestion")) {
-  question = document.querySelector("#divnoselect span.getActualQuestion").innerText;
+  question = document.querySelector(
+    "#divnoselect span.getActualQuestion"
+  ).innerText;
 }
 
 let q1, q2, q3, q4;
@@ -75,9 +79,10 @@ async function run(question) {
   const container = document.getElementById("gptAnswerContainer");
   const btnContainer = document.getElementById("btnContainer");
   container.className = "chat-gpt-container";
-  container.innerHTML = '<p class="loading">Waiting for ChatGPT response...</p>';
+  container.innerHTML =
+    '<p class="loading">Waiting for ChatGPT response...</p>';
   btnContainer.innerHTML = "";
-  
+
   const regenerateButton = document.createElement("button");
   regenerateButton.id = "regenerateButton";
   regenerateButton.style.display = "none";
@@ -105,47 +110,43 @@ async function run(question) {
   btnContainer.appendChild(stopButton);
 
   port.onMessage.addListener(function (msg) {
-    console.log(msg)
-    if (msg.response) {
-      const answer = msg.response.message?.content?.parts?.[0];
+    console.log(msg);
+    if (msg.answer) {
       container.classList.add("answer");
 
       container.innerHTML = `
         <h5>Question:</h5>
         ${markdown.render(question)}
         <h5>Answer:</h5>
-        ${markdown.render(answer)}
+        ${markdown.render(msg.answer)}
       `;
       hljs.highlightAll();
       scrollToBottom(container);
-      
-      const isCompleted = msg.response.message.end_turn === true;
+
+      const isCompleted = msg.isCompleted;
       if (isCompleted) {
         stopButton.style.display = "none";
         regenerateButton.style.display = "block";
         regenerateButton.disabled = false;
-      }
-      else {
+      } else {
         stopButton.style.display = "block";
         regenerateButton.style.display = "none";
       }
     } else if (msg.error === "UNAUTHORIZED") {
       container.innerHTML =
-        '<p class="gpt-error">UNAUTHORIZED!</p><p>Please login at <a href="https://chat.openai.com" target="_blank">chat.openai.com</a> first</p>';
-        stopButton.style.display = "none";
-        regenerateButton.style.display = "none";
-    } else if (msg.error === "CLOUDFLARE") {
-      container.innerHTML =
-        '<p class="gpt-error">Cloudflare error!</p><p>Please pass cloudflare check at <a href="https://chat.openai.com" target="_blank">chat.openai.com</a></p>';
-        stopButton.style.display = "none";
-        regenerateButton.style.display = "none";
-    }
-    else if (msg.error) {
-      container.innerHTML = `<p class="gpt-error">Failed to load response from ChatGPT</p><pre>${js_beautify(msg.error, { indent_size: 2, space_in_empty_paren: true })}</pre>`;
+        '<p class="gpt-error">UNAUTHORIZED!</p><p>Please login at <a href="https://chatgpt.com" target="_blank">chatgpt.com</a> first</p>';
       stopButton.style.display = "none";
       regenerateButton.style.display = "none";
-    } else {
-      container.innerHTML = "<p class='gpt-error'>Unknown Error!</p><p>Failed to load response from ChatGPT.</p>";
+    } else if (msg.error === "CLOUDFLARE") {
+      container.innerHTML =
+        '<p class="gpt-error">Cloudflare error!</p><p>Please pass cloudflare check at <a href="https://chatgpt.com" target="_blank">chatgpt.com</a></p>';
+      stopButton.style.display = "none";
+      regenerateButton.style.display = "none";
+    } else if (msg.error) {
+      container.innerHTML = `<p class="gpt-error">Failed to load response from ChatGPT</p><pre>${js_beautify(
+        msg.error,
+        { indent_size: 2, space_in_empty_paren: true }
+      )}</pre>`;
       stopButton.style.display = "none";
       regenerateButton.style.display = "none";
     }
@@ -178,21 +179,32 @@ myModal.innerHTML = `
 document.body.append(openModal, myModal);
 const styleSheet = document.createElement("link");
 styleSheet.rel = "stylesheet";
-styleSheet.href = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css";
+styleSheet.href =
+  "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css";
 document.head.appendChild(styleSheet);
 
 var close = document.getElementsByClassName("close1")[0];
 
 openModal.onclick = function () {
   const newLine = "\n \n";
+  const guidMsg =
+    "You have to select the correct answer from the options, Here is MCQ for you:";
   if (question) {
-    if (!document.getElementById("gptAnswerContainer").classList.contains("answer")) {
-      const mc = q1 && q2 && q3 && q4 ? q1 + newLine + q2 + newLine + q3 + newLine + q4 + newLine : "";
+    if (
+      !document
+        .getElementById("gptAnswerContainer")
+        .classList.contains("answer")
+    ) {
+      const mc =
+        q1 && q2 && q3 && q4
+          ? q1 + newLine + q2 + newLine + q3 + newLine + q4 + newLine
+          : "";
       // run("Show me the example of HTML CSS and JavaScript");
-      run(question + newLine + mc);
+      run(guidMsg + newLine + question + newLine + mc);
     }
   } else {
-    document.getElementById("gptAnswerContainer").innerHTML = "<p>Something went wrong!</p><p>Question not found on this page</p>";
+    document.getElementById("gptAnswerContainer").innerHTML =
+      "<p>Something went wrong!</p><p>Question not found on this page</p>";
   }
   myModal.classList.add("show");
 };
