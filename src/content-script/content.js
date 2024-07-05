@@ -33,13 +33,9 @@ if (span) {
 
 let question;
 if (document.querySelector("#divnoselect textarea.getActualQuestion")) {
-  question = document.querySelector(
-    "#divnoselect textarea.getActualQuestion"
-  ).value;
+  question = document.querySelector("#divnoselect textarea.getActualQuestion").value;
 } else if (document.querySelector("#divnoselect span.getActualQuestion")) {
-  question = document.querySelector(
-    "#divnoselect span.getActualQuestion"
-  ).innerText;
+  question = document.querySelector("#divnoselect span.getActualQuestion").innerText;
 }
 
 let q1, q2, q3, q4;
@@ -76,11 +72,10 @@ async function run(question) {
   const markdown = new MarkdownIt();
   const port = Browser.runtime.connect();
 
-  const container = document.getElementById("gptAnswerContainer");
+  const container = document.getElementById("geminiAnswerContainer");
   const btnContainer = document.getElementById("btnContainer");
-  container.className = "chat-gpt-container";
-  container.innerHTML =
-    '<p class="loading">Waiting for ChatGPT response...</p>';
+  container.className = "chat-container";
+  container.innerHTML = '<p class="loading">Waiting for Gemini response...</p>';
   btnContainer.innerHTML = "";
 
   const regenerateButton = document.createElement("button");
@@ -132,21 +127,8 @@ async function run(question) {
         stopButton.style.display = "block";
         regenerateButton.style.display = "none";
       }
-    } else if (msg.error === "UNAUTHORIZED") {
-      container.innerHTML =
-        '<p class="gpt-error">UNAUTHORIZED!</p><p>Please login at <a href="https://chatgpt.com" target="_blank">chatgpt.com</a> first</p>';
-      stopButton.style.display = "none";
-      regenerateButton.style.display = "none";
-    } else if (msg.error === "CLOUDFLARE") {
-      container.innerHTML =
-        '<p class="gpt-error">Cloudflare error!</p><p>Please pass cloudflare check at <a href="https://chatgpt.com" target="_blank">chatgpt.com</a></p>';
-      stopButton.style.display = "none";
-      regenerateButton.style.display = "none";
     } else if (msg.error) {
-      container.innerHTML = `<p class="gpt-error">Failed to load response from ChatGPT</p><pre>${js_beautify(
-        msg.error,
-        { indent_size: 2, space_in_empty_paren: true }
-      )}</pre>`;
+      container.innerHTML = `<p class="gemini-error">Failed to load response from Gemini</p><pre>${js_beautify(msg.error, { indent_size: 2, space_in_empty_paren: true })}</pre>`;
       stopButton.style.display = "none";
       regenerateButton.style.display = "none";
     }
@@ -168,10 +150,10 @@ myModal.className = "modal1";
 myModal.innerHTML = `
   <div class="modal-header1">
     <span class="close1" title="Close to select answer">&times;</span>
-    <div class="flex-head"><img src="${getImageSrc}" /><h3>ChatGPT For Vu Quiz</h3></div>
+    <div class="flex-head"><img src="${getImageSrc}" /><h3>Gemini For Vu Quiz</h3></div>
   </div>
   <div id="answerContainer1">
-    <div id="gptAnswerContainer"></div>
+    <div id="geminiAnswerContainer"></div>
     <div id="btnContainer"></div>
   </div>
 `;
@@ -179,32 +161,22 @@ myModal.innerHTML = `
 document.body.append(openModal, myModal);
 const styleSheet = document.createElement("link");
 styleSheet.rel = "stylesheet";
-styleSheet.href =
-  "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css";
+styleSheet.href = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css";
 document.head.appendChild(styleSheet);
 
 var close = document.getElementsByClassName("close1")[0];
 
 openModal.onclick = function () {
   const newLine = "\n \n";
-  const guidMsg =
-    "You have to select the correct answer from the options, Here is MCQ for you:";
+  const guidMsg = "You have to select the correct answer from the options, Here is MCQ for you:";
   if (question) {
-    if (
-      !document
-        .getElementById("gptAnswerContainer")
-        .classList.contains("answer")
-    ) {
-      const mc =
-        q1 && q2 && q3 && q4
-          ? q1 + newLine + q2 + newLine + q3 + newLine + q4 + newLine
-          : "";
+    if (!document.getElementById("geminiAnswerContainer").classList.contains("answer")) {
+      const mc = q1 && q2 && q3 && q4 ? q1 + newLine + q2 + newLine + q3 + newLine + q4 + newLine : "";
       // run("Show me the example of HTML CSS and JavaScript");
       run(guidMsg + newLine + question + newLine + mc);
     }
   } else {
-    document.getElementById("gptAnswerContainer").innerHTML =
-      "<p>Something went wrong!</p><p>Question not found on this page</p>";
+    document.getElementById("geminiAnswerContainer").innerHTML = "<p>Something went wrong!</p><p>Question not found on this page</p>";
   }
   myModal.classList.add("show");
 };

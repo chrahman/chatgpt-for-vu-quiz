@@ -44,3 +44,22 @@ body {
 .text-red {
     color: #e63946;
 }
+
+.input-group-text {
+    padding: 5px;
+    background: lightgray;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.input-group.my-2 {
+    display: flex;
+    align-items: center;
+}
+
+input#inputApiKey {
+    width: 80%;
+    height: 24px;
+    border: 1px solid lightgray;
+    outline: none;
+}

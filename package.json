@@ -20,6 +20,7 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.14.1",
     "buffer": "^6.0.3",
     "copy-webpack-plugin": "^11.0.0",
     "eventsource-parser": "^0.1.0",

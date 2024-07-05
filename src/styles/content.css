@@ -15,7 +15,7 @@
     font-weight: initial !important;
 }
 
-div#gptAnswerContainer {
+div#geminiAnswerContainer {
     font-family: Calibri, 'Arial' !important;
     font-size: 14px !important;
     font-weight: initial !important;
@@ -92,13 +92,13 @@ button#openModalBtn1:hover {
     padding: 20px;
 }
 
-div#gptAnswerContainer {
+div#geminiAnswerContainer {
     overflow: auto;
     position: relative;
 }
 
 
-#gptAnswerContainer h5 {
+#geminiAnswerContainer h5 {
     font-size: 1.25rem !important;
     font-weight: 600 !important;
     margin-bottom: 0.5rem !important;
@@ -106,16 +106,16 @@ div#gptAnswerContainer {
 }
 
 
-.chat-gpt-container p {
+.chat-container p {
     font-size: 18px !important;
 }
 
-p.gpt-error {
+p.gemini-error {
     color: red;
     margin-top: 0 !important;
 }
 
-.chat-gpt-container pre {
+.chat-container pre {
     background: #eee !important;
     padding: 10px !important;
     border-radius: 5px !important;
@@ -123,7 +123,7 @@ p.gpt-error {
     line-height: 1.5 !important;
 }
 
-.chat-gpt-container code {
+.chat-container code {
     background: #eee !important;
     padding: 0 5px !important;
     border-radius: 5px !important;
@@ -156,7 +156,7 @@ p.gpt-error {
     background: #555;
 }
 
-.chat-gpt-container #stopButton {
+.chat-container #stopButton {
     display: block !important;
 }
 
